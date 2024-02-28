@@ -28,7 +28,11 @@ let previousOperand = '';
 let operation = undefined;
 
 function updateDisplay() {
-  display.innerText = currentOperand;
+  if (operation !== undefined && previousOperand !== '') {
+    display.textContent = `${previousOperand} ${operation} ${currentOperand}`;
+  } else {
+    display.textContent = currentOperand;
+  }
 }
 
 function appendNumber(number) {
@@ -50,6 +54,7 @@ function chooseOperation(op) {
   operation = op;
   previousOperand = currentOperand;
   currentOperand = '';
+  updateDisplay();
 }
 
 function compute() {
