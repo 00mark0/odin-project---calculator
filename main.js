@@ -322,7 +322,7 @@ function adjustFontSize() {
   let length = display.textContent.length;
 
   if (length > 20) {
-    display.style.fontSize = '10px';
+    display.style.fontSize = '15px';
   } else if (length > 15) {
     display.style.fontSize = '20px';
   } else if (length > 10) {
@@ -345,7 +345,7 @@ buttons.eight.addEventListener('click', () => appendNumber(8));
 buttons.nine.addEventListener('click', () => appendNumber(9));
 buttons.clear.addEventListener('click', () => {
   clear();
-  clear.blur();
+  buttons.clear.blur();
 });
 buttons.plus.addEventListener('click', () => chooseOperation('+'));
 buttons.minus.addEventListener('click', () => chooseOperation('-'));
