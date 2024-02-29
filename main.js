@@ -1,5 +1,22 @@
+/**
+ * The main JavaScript file for the calculator application.
+ *
+ * @file This file contains the logic for the calculator application.
+ * It defines functions to handle button clicks, perform calculations,
+ * update the display, and handle keyboard inputs.
+ *
+ * @summary Calculator application logic.
+ * @since 1.0.0
+ * @version 1.0.0
+ */
+
+// FILEPATH: /home/mark00/repos/odin-project---calculator/main.js
+
+// Selecting DOM elements
 let container = document.querySelector('.container');
 let display = document.querySelector('.display');
+
+// Object containing references to all the calculator buttons
 const buttons = {
   zero: document.querySelector('#number-0'),
   one: document.querySelector('#number-1'),
@@ -23,24 +40,61 @@ const buttons = {
   decimal: document.querySelector('#decimal'),
 };
 
+// Variables to store the current and previous operands, and the current operation
 let currentOperand = '';
 let previousOperand = '';
 let operation = undefined;
 
+// Maximum number allowed in calculations
+const MAX_NUMBER = 9007199254740991;
+
+/**
+ * Updates the display with the current operand and operation.
+ * If there is no operation or previous operand, only the current operand is displayed.
+ *
+ * @function
+ * @returns {void}
+ */
 function updateDisplay() {
   if (operation !== undefined && previousOperand !== '') {
     display.textContent = `${previousOperand} ${operation} ${currentOperand}`;
   } else {
     display.textContent = currentOperand;
   }
+  adjustFontSize();
 }
 
+/**
+ * Appends a number to the current operand.
+ * If the display length exceeds 30 characters, the number is not appended.
+ * If the resulting number exceeds the maximum allowed number, it is not appended.
+ *
+ * @function
+ * @param {number} number - The number to append.
+ * @returns {void}
+ */
 function appendNumber(number) {
+  if (display.textContent.length >= 30) {
+    return;
+  }
+
+  if (parseFloat(currentOperand + number.toString()) > MAX_NUMBER) {
+    return;
+  }
+
   currentOperand += number.toString();
   updateDisplay();
+  adjustFontSize();
   disableDecimalButton();
 }
 
+/**
+ * Sets the chosen operation and performs the calculation if necessary.
+ *
+ * @function
+ * @param {string} op - The operation to perform.
+ * @returns {void}
+ */
 function chooseOperation(op) {
   if (currentOperand === '') {
     return;
@@ -57,6 +111,12 @@ function chooseOperation(op) {
   updateDisplay();
 }
 
+/**
+ * Performs the calculation based on the current operation and operands.
+ *
+ * @function
+ * @returns {void}
+ */
 function compute() {
   const prev = parseFloat(previousOperand);
   const current = parseFloat(currentOperand);
@@ -92,6 +152,11 @@ function compute() {
       return;
   }
 
+  if (currentOperand > MAX_NUMBER) {
+    currentOperand = 'Error: Number is too large';
+    return;
+  }
+
   if (currentOperand % 1 !== 0) {
     currentOperand = parseFloat(currentOperand.toFixed(2));
   }
@@ -100,6 +165,12 @@ function compute() {
   previousOperand = '';
 }
 
+/**
+ * Performs the calculation and updates the display.
+ *
+ * @function
+ * @returns {void}
+ */
 function equals() {
   if (
     operation !== undefined &&
@@ -111,6 +182,12 @@ function equals() {
   updateDisplay();
 }
 
+/**
+ * Clears the current and previous operands, and the operation.
+ *
+ * @function
+ * @returns {void}
+ */
 function clear() {
   currentOperand = '';
   previousOperand = '';
@@ -120,11 +197,23 @@ function clear() {
   disableDecimalButton();
 }
 
+/**
+ * Deletes the last character from the current operand.
+ *
+ * @function
+ * @returns {void}
+ */
 function deleteNumber() {
   currentOperand = currentOperand.toString().slice(0, -1);
   updateDisplay();
 }
 
+/**
+ * Appends a decimal point to the current operand if it doesn't already contain one.
+ *
+ * @function
+ * @returns {void}
+ */
 function appendDecimal() {
   if (!currentOperand.includes('.')) {
     currentOperand += '.';
@@ -133,6 +222,12 @@ function appendDecimal() {
   disableDecimalButton();
 }
 
+/**
+ * Disables the decimal button if the current operand already contains a decimal point.
+ *
+ * @function
+ * @returns {void}
+ */
 function disableDecimalButton() {
   const decimalIndex = currentOperand.indexOf('.');
   if (decimalIndex !== -1 && decimalIndex < currentOperand.length - 1) {
@@ -142,6 +237,13 @@ function disableDecimalButton() {
   }
 }
 
+/**
+ * Handles key press events and performs the corresponding action.
+ *
+ * @function
+ * @param {KeyboardEvent} e - The key press event.
+ * @returns {void}
+ */
 function handleKeyPress(e) {
   switch (e.key) {
     case '0':
@@ -209,6 +311,28 @@ function handleKeyPress(e) {
   }
 }
 
+/**
+ * Adjusts the font size of the display based on its content length.
+ *
+ * @function
+ * @returns {void}
+ */
+function adjustFontSize() {
+  const display = document.querySelector('.display');
+  let length = display.textContent.length;
+
+  if (length > 20) {
+    display.style.fontSize = '10px';
+  } else if (length > 15) {
+    display.style.fontSize = '20px';
+  } else if (length > 10) {
+    display.style.fontSize = '30px';
+  } else {
+    display.style.fontSize = '50px';
+  }
+}
+
+// Event listeners for button clicks
 buttons.zero.addEventListener('click', () => appendNumber(0));
 buttons.one.addEventListener('click', () => appendNumber(1));
 buttons.two.addEventListener('click', () => appendNumber(2));
@@ -234,6 +358,7 @@ window.addEventListener('keydown', handleKeyPress);
 buttons.delete.addEventListener('click', deleteNumber);
 buttons.decimal.addEventListener('click', appendDecimal);
 
+// Prevent form submission
 const form = document.querySelector('form');
 if (form) {
   form.addEventListener('submit', (e) => {
