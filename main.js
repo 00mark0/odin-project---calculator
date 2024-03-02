@@ -44,6 +44,7 @@ const buttons = {
 let currentOperand = '';
 let previousOperand = '';
 let operation = undefined;
+let isOperationComplete = false;
 
 // Maximum number allowed in calculations
 const MAX_NUMBER = 9007199254740991;
@@ -80,6 +81,11 @@ function appendNumber(number) {
 
   if (parseFloat(currentOperand + number.toString()) > MAX_NUMBER) {
     return;
+  }
+
+  if (isOperationComplete) {
+    currentOperand = '';
+    isOperationComplete = false;
   }
 
   currentOperand += number.toString();
@@ -178,6 +184,7 @@ function equals() {
     previousOperand !== ''
   ) {
     compute();
+    isOperationComplete = true;
   }
   updateDisplay();
 }
